@@ -1,6 +1,6 @@
-# wezterm-config
+# dev-setup
 
-Personal WezTerm and Zsh configuration with modular installation system.
+Personal development environment setup for Debian/Ubuntu: WezTerm + Zsh dotfiles plus a modular installer for Go, Neovim, Claude Code, Node, and Docker.
 
 ## Quick Start
 

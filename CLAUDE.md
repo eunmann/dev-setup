@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-This repository contains personal configuration files for WezTerm terminal emulator and zsh shell customization. It includes a modular installation system to set up a complete development environment on Debian/Ubuntu systems.
+This repository sets up a complete personal development environment on Debian/Ubuntu systems. It contains dotfiles for WezTerm and zsh, plus a modular installation system for the terminal, development tools (Go, Neovim, Claude Code, Node), and Docker.
 
 ## Installation
 
