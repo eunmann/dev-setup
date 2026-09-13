@@ -22,6 +22,9 @@ echo
 "$INSTALL_DIR/zsh-setup.sh"
 echo
 
+"$INSTALL_DIR/zsh-autosuggestions.sh"
+echo
+
 "$INSTALL_DIR/dotfiles.sh"
 echo
 
@@ -33,6 +36,7 @@ echo "Installed:"
 echo "  • WezTerm (apt)"
 echo "  • SauceCodePro Nerd Font (system-wide)"
 echo "  • zsh as default shell"
+echo "  • zsh-autosuggestions (~/.zsh/zsh-autosuggestions)"
 echo "  • ~/.zshrc with git status integration"
 echo "  • ~/.wezterm.lua with theme and keybindings"
 echo

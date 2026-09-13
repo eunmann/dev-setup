@@ -53,6 +53,27 @@ else
 fi
 
 # =========================================================================
+section "Zsh Plugins"
+# =========================================================================
+AUTOSUGGEST_DIR="$HOME/.zsh/zsh-autosuggestions"
+if [[ -s "$AUTOSUGGEST_DIR/zsh-autosuggestions.zsh" ]]; then
+  # The plugin stamps its version in a header comment; fall back to the commit
+  # (a --depth 1 clone has no tags to describe).
+  AUTOSUGGEST_VER="$(grep -m1 -oE '^# v[0-9.]+' "$AUTOSUGGEST_DIR/zsh-autosuggestions.zsh" 2>/dev/null | cut -d' ' -f2 || true)"
+  if [[ -z "$AUTOSUGGEST_VER" ]]; then
+    AUTOSUGGEST_VER="$(git -C "$AUTOSUGGEST_DIR" rev-parse --short HEAD 2>/dev/null || echo "unknown")"
+  fi
+  pass "zsh-autosuggestions installed ($AUTOSUGGEST_VER)"
+  if grep -q 'zsh-autosuggestions.zsh' "$HOME/.zshrc" 2>/dev/null; then
+    pass "~/.zshrc sources zsh-autosuggestions"
+  else
+    warn "zsh-autosuggestions installed but not sourced by ~/.zshrc (run install/dotfiles.sh)"
+  fi
+else
+  fail "zsh-autosuggestions not installed ($AUTOSUGGEST_DIR)"
+fi
+
+# =========================================================================
 section "WezTerm"
 # =========================================================================
 if command -v wezterm &>/dev/null; then

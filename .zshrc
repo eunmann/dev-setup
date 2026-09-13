@@ -26,6 +26,25 @@ setopt HIST_VERIFY              # show history expansions before running
 autoload -Uz compinit
 compinit
 
+# ─── Plugins ────────────────────────────────────────────────────────────
+# zsh-autosuggestions: greys out a suggestion from history as you type;
+# accept with → (right arrow), End or Ctrl+Space (bound below). Installed by
+# install/zsh-autosuggestions.sh
+# (silently skipped if not installed). Must be sourced after compinit so the
+# completion fallback strategy works.
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#565f89'   # Tokyo Night comment grey
+ZSH_AUTOSUGGEST_STRATEGY=(history completion)  # history first, then completion
+ZSH_AUTOSUGGEST_MANUAL_REBIND=1                # skip widget re-wrapping (faster prompt)
+ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=40             # no suggestions for long pastes
+if [ -s "$HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh" ]; then
+  \. "$HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh"
+  # Extra accept key alongside the defaults (→ / End / ^F / ^E still accept).
+  # Ctrl+Space sends ^@; it only displaces set-mark-command, and WezTerm binds
+  # CTRL+SHIFT+Space (QuickSelect) rather than CTRL+Space, so it reaches zsh.
+  # Must come after the source — the widget doesn't exist until the plugin loads.
+  bindkey '^@' autosuggest-accept
+fi
+
 # ─── Prompt ─────────────────────────────────────────────────────────────
 PROMPT='%F{white}%n@%m%f %F{yellow}%~%f %F{green}%#%f '
 

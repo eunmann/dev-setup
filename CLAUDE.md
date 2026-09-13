@@ -38,6 +38,7 @@ All scripts orchestrate their respective modules in the correct order. For selec
 - `install/wezterm.sh` - Adds WezTerm apt repository and installs WezTerm via deb package
 - `install/fonts.sh` - Downloads and installs SauceCodePro Nerd Font system-wide (latest version via GitHub API)
 - `install/zsh-setup.sh` - Sets zsh as the default shell in /etc/shells
+- `install/zsh-autosuggestions.sh` - Clones zsh-users/zsh-autosuggestions to `~/.zsh/zsh-autosuggestions` (sourced by `.zshrc`)
 - `install/dotfiles.sh` - Copies .zshrc and .wezterm.lua to user home directory with backups
 - `install/zshrc.sh` - Installs/updates only .zshrc (focused module, used by `dotfiles.sh`)
 - `install/go.sh` - Installs latest Go from go.dev to /usr/local/go
@@ -68,6 +69,7 @@ The `.zshrc` provides:
 - **NVM**: sources `$NVM_DIR/nvm.sh` and bash_completion (silently skipped if NVM isn't installed)
 - **History management**: shared history across sessions, duplicate removal (`SHARE_HISTORY`, `HIST_IGNORE_ALL_DUPS`, etc.), 10k entries
 - **Completion**: `compinit` for tab completion
+- **Plugins**: sources `~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh` if present (installed by `install/zsh-autosuggestions.sh`) — must stay *after* `compinit` because the `completion` fallback strategy needs it; `ZSH_AUTOSUGGEST_*` vars are set before the source since the plugin reads them at load time, while `bindkey '^@' autosuggest-accept` (Ctrl+Space as an extra accept key, on top of the default →/End/^F/^E) must come *after* it, since the widget doesn't exist until the plugin loads. Ctrl+Space is safe because WezTerm binds CTRL+SHIFT+Space (QuickSelect), not CTRL+Space
 - **Minimal prompt**: `user@host ~/path %` — git/host/time render in WezTerm's right status bar instead of in the prompt
 - **WezTerm integration** (only active when `$TERM_PROGRAM == WezTerm`):
   - `_wez_precmd` hook emits OSC 7 (cwd reporting, so new wezterm tabs inherit the cwd), and OSC 1337 user-vars for `git_status` (`"repo (branch)"`) and `prog` (reset to `zsh` between commands)

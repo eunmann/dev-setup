@@ -11,7 +11,7 @@ Personal WezTerm and Zsh configuration with modular installation system.
 
 This installs everything:
 - WezTerm (apt) + SauceCodePro Nerd Font
-- Zsh as default shell + custom configurations
+- Zsh as default shell + zsh-autosuggestions + custom configurations
 - Go (latest from go.dev)
 - Neovim (latest from GitHub) + kickstart.nvim config
 - Claude Code (native binary)
@@ -43,6 +43,7 @@ Docker only:
 ./install/wezterm.sh           # Install WezTerm
 ./install/fonts.sh             # Install Nerd Fonts
 ./install/zsh-setup.sh         # Set zsh as default shell
+./install/zsh-autosuggestions.sh  # Clone zsh-autosuggestions to ~/.zsh
 ./install/dotfiles.sh          # Copy config files to ~
 ./install/zshrc.sh             # Install/update only .zshrc (with backup)
 ```
@@ -72,6 +73,7 @@ Docker only:
 
 **Zsh:**
 - Shared history across sessions
+- Autosuggestions from history (accept with → , End or Ctrl+Space)
 - Git branch integration with WezTerm
 - Minimal prompt (git info shown in terminal status bar)
 
