@@ -10,7 +10,7 @@ Personal development environment setup for Debian/Ubuntu: WezTerm + Zsh dotfiles
 ```
 
 This installs everything:
-- WezTerm (apt) + SauceCodePro Nerd Font
+- WezTerm nightly (apt) + SauceCodePro Nerd Font
 - Zsh as default shell + zsh-autosuggestions + custom configurations
 - Go (latest from go.dev)
 - Neovim (latest from GitHub) + kickstart.nvim config
@@ -40,7 +40,7 @@ Docker only:
 **Terminal setup modules:**
 ```bash
 ./install/packages.sh          # Install apt packages
-./install/wezterm.sh           # Install WezTerm
+./install/wezterm.sh           # Install WezTerm nightly (--update for the latest build)
 ./install/fonts.sh             # Install Nerd Fonts
 ./install/zsh-setup.sh         # Set zsh as default shell
 ./install/zsh-autosuggestions.sh  # Clone zsh-autosuggestions to ~/.zsh
@@ -66,6 +66,7 @@ Docker only:
 ## Features
 
 **WezTerm:**
+- Nightly build, held in apt. The last stable release (2024) leaks X11 windows through ibus while a busy TUI like Claude Code runs, slowing the desktop and freezing it when WezTerm closes. Update with `./install/wezterm.sh --update`
 - Tokyo Night color scheme
 - SauceCodePro Nerd Font
 - SUPER+hjkl pane navigation, SUPER+| / SUPER+_ splitting

@@ -35,7 +35,7 @@ All scripts orchestrate their respective modules in the correct order. For selec
 - `install-devtools.sh` - Development tools (Go + Neovim + Claude Code)
 - `install/helpers.sh` - Common helper functions (`need_sudo`, `get_user_info`, `install_dotfile`)
 - `install/packages.sh` - Installs required apt packages (zsh, git, curl, unzip, xclip, jq, make, gcc, ripgrep, fd-find)
-- `install/wezterm.sh` - Adds WezTerm apt repository and installs WezTerm via deb package
+- `install/wezterm.sh` - Adds WezTerm apt repository and installs `wezterm-nightly` (held); replaces stable `wezterm` if present; `--update` moves to the latest nightly
 - `install/fonts.sh` - Downloads and installs SauceCodePro Nerd Font system-wide (latest version via GitHub API)
 - `install/zsh-setup.sh` - Sets zsh as the default shell in /etc/shells
 - `install/zsh-autosuggestions.sh` - Clones zsh-users/zsh-autosuggestions to `~/.zsh/zsh-autosuggestions` (sourced by `.zshrc`)
@@ -48,6 +48,14 @@ All scripts orchestrate their respective modules in the correct order. For selec
 - `install/nvm.sh` - Installs NVM (Node Version Manager) and latest LTS Node
 - `install/devstart.sh` - Installs devstart script to `~/.local/bin`
 - `install/docker.sh` - Installs Docker using official script, adds user to docker group
+
+## WezTerm Package
+
+WezTerm is installed as `wezterm-nightly` from the official apt repo (`apt.fury.io/wez`), not the stable `wezterm` package (the two conflict). The last stable release (20240203) has an X11 IME bug: while focused, every text-cursor move re-opens an XIM connection to ibus and leaks an unmapped 1x1 window in both WezTerm and `ibus-x11`. Busy TUIs like Claude Code leak thousands per hour; Cinnamon's compositor tracks every one, so the desktop slows over a session and freezes for about a minute when WezTerm closes. The fix (xcb-imdkit-rs, May 2025) is only in nightly builds.
+
+- The package is put on hold so `apt upgrade` doesn't pull a new nightly daily; `install/wezterm.sh --update` unholds, installs the latest, and re-holds
+- `check.sh` warns if stable `wezterm` is installed and compares against `apt-cache policy` (not `apt list --upgradable`) so held nightlies still report updates
+- Don't set `use_ime = false` as a workaround: on stable it makes the leak worse (XIM replies are never processed, so the handshake never completes)
 
 ## WezTerm Configuration Architecture
 

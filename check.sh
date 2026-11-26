@@ -19,6 +19,10 @@ warn() { ((WARN++)); printf "  ${YELLOW}!${NC} %s\n" "$1"; }
 info() { printf "    %s\n" "$1"; }
 section() { printf "\n${BOLD}── %s${NC}\n" "$1"; }
 
+# True if an apt package is installed (removed-but-not-purged packages still
+# have a dpkg record, so `dpkg -s` alone isn't enough).
+pkg_installed() { dpkg-query -W -f='${Status}' "$1" 2>/dev/null | grep -q ' installed$'; }
+
 # ── Variables filled by checks, used across sections ─────────────────────
 GO_CURRENT="" NVIM_CURRENT="" WEZTERM_VER="" NVM_CURRENT="" NODE_CURRENT=""
 
@@ -76,9 +80,23 @@ fi
 # =========================================================================
 section "WezTerm"
 # =========================================================================
+WEZTERM_PKG=""
 if command -v wezterm &>/dev/null; then
   WEZTERM_VER="$(wezterm --version 2>/dev/null | awk '{print $2}' || echo "unknown")"
-  pass "WezTerm installed ($WEZTERM_VER)"
+  if pkg_installed wezterm-nightly; then
+    WEZTERM_PKG="wezterm-nightly"
+    pass "WezTerm nightly installed ($WEZTERM_VER)"
+    if apt-mark showhold 2>/dev/null | grep -qx wezterm-nightly; then
+      pass "wezterm-nightly held (update with install/wezterm.sh --update)"
+    else
+      info "wezterm-nightly not held — apt upgrade will pull a new nightly each day"
+    fi
+  elif pkg_installed wezterm; then
+    WEZTERM_PKG="wezterm"
+    warn "WezTerm stable ($WEZTERM_VER) leaks X11 windows via ibus/XIM — run install/wezterm.sh to switch to nightly"
+  else
+    pass "WezTerm installed ($WEZTERM_VER, not from apt)"
+  fi
 else
   fail "WezTerm not installed"
 fi
@@ -306,11 +324,19 @@ else
     info "Latest NVM: $NVM_LATEST (not installed locally)"
   fi
 
-  # WezTerm (apt)
-  if command -v wezterm &>/dev/null; then
-    WEZTERM_UPGRADABLE="$(apt list --upgradable 2>/dev/null | grep wezterm || true)"
-    if [[ -n "$WEZTERM_UPGRADABLE" ]]; then
-      warn "WezTerm apt update available"
+  # WezTerm (apt). Compare against apt's candidate rather than `apt list
+  # --upgradable` so a held nightly still reports newer builds. Reflects the
+  # package lists as of the last `apt update`.
+  if [[ -n "$WEZTERM_PKG" ]]; then
+    WEZTERM_POLICY="$(apt-cache policy "$WEZTERM_PKG" 2>/dev/null)"
+    WEZTERM_INSTALLED="$(awk '/Installed:/ { print $2 }' <<<"$WEZTERM_POLICY")"
+    WEZTERM_CANDIDATE="$(awk '/Candidate:/ { print $2 }' <<<"$WEZTERM_POLICY")"
+    if [[ -n "$WEZTERM_CANDIDATE" && "$WEZTERM_CANDIDATE" != "(none)" && "$WEZTERM_INSTALLED" != "$WEZTERM_CANDIDATE" ]]; then
+      if [[ "$WEZTERM_PKG" == "wezterm-nightly" ]]; then
+        warn "WezTerm nightly update: $WEZTERM_INSTALLED → $WEZTERM_CANDIDATE (run install/wezterm.sh --update)"
+      else
+        warn "WezTerm update: $WEZTERM_INSTALLED → $WEZTERM_CANDIDATE"
+      fi
     else
       pass "WezTerm up to date ($WEZTERM_VER)"
     fi
